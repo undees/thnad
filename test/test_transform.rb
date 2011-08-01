@@ -6,5 +6,5 @@ require 'thnad/transform'
 
 include Thnad
 
-describe Parser do
+describe Transform do
 end
