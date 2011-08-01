@@ -1,1 +1,8 @@
 #!/usr/bin/env jruby
+
+(puts("Usage: #{} SOURCE"); exit) if ARGV.empty?
+
+$: << File.expand_path(File.dirname(__FILE__) + '/../lib')
+require 'thnad/compiler'
+
+Thnad::Compiler.new(ARGV.first).compile

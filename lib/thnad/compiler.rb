@@ -5,5 +5,54 @@ require 'thnad/builtins'
 
 module Thnad
   class Compiler
+    def initialize(filename)
+      @filename  = filename
+      @classname = File.basename(@filename, '.thnad')
+    end
+
+    def compile
+      tree      = parse_source
+      classname = @classname
+
+      builder = BiteScript::FileBuilder.build(@filename) do
+        public_class classname, object do |klass|
+          klass.public_static_method 'main', [], void, string[] do |method|
+            context = Hash.new
+            tree.each do |e|
+              e.eval(context, method)
+            end
+
+            method.println(method.int)
+            method.returnvoid
+          end
+        end
+      end
+
+      write_result builder
+    end
+
+    private
+
+    def parse_source
+      source    = File.expand_path(@filename)
+      program   = IO.read source
+
+      parser    = Parser.new
+      transform = Transform.new
+      syntax    = parser.parse(program)
+      tree      = transform.apply(syntax)
+
+      tree.is_a?(Array) ? tree : [tree]
+    end
+
+    def write_result(builder)
+      destination = File.expand_path(@classname + '.class')
+
+      builder.generate do |n, b|
+        File.open(destination, 'wb') do |f|
+          f.write b.generate
+        end
+      end
+    end
   end
 end

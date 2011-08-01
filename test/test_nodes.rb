@@ -9,4 +9,18 @@ require 'fake_builder'
 include Thnad
 
 describe 'Nodes' do
+  before do
+    @context = Hash.new
+    @builder = FakeBuilder.new
+  end
+
+  it 'emits a number' do
+    input    = Thnad::Number.new 42
+    expected = <<HERE
+ldc 42
+HERE
+    input.eval @context, @builder
+
+    @builder.result.must_equal expected
+  end
 end
