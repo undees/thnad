@@ -7,8 +7,11 @@ module Thnad
 
   class Name < Struct.new :name
     def eval(context, builder)
-      value = context.fetch(name) { raise "Unknown parameter #{name}" }
-      builder.ldc value
+      param_names = context[:params] || []
+      position    = param_names.index(name)
+      raise "Unknown parameter #{name}" unless position
+
+      builder.iload position
     end
   end
 
@@ -33,6 +36,19 @@ module Thnad
       if_false.eval context, builder
 
       builder.label :endif
+    end
+  end
+
+  class Function < Struct.new :name, :params, :body
+    def eval(context, builder)
+      param_names = (params.is_a?(Array) ? params : [params]).map(&:name)
+      context[:params] = param_names
+      types = [builder.int] * (param_names.count + 1)
+
+      builder.public_static_method(self.name, [], *types) do |method|
+        self.body.eval(context, method)
+        method.ireturn
+      end
     end
   end
 end

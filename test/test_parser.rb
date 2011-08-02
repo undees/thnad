@@ -57,4 +57,16 @@ HERE
 
     @parser.cond.parse(input).must_equal expected
   end
+
+  it 'reads a function definition' do
+    input    = <<HERE
+function foo(x) {
+  5
+}
+HERE
+    expected = {:func   => {:name => 'foo'},
+                :params => {:param => {:name => 'x'}},
+                :body   => {:number => '5'}}
+    @parser.func.parse(input).must_equal expected
+  end
 end

@@ -1,5 +1,9 @@
-if (0) {
-  print(42)
-} else {
-  print(667)
+function factorial(n) {
+  if (eq(n, 1)) {
+    1
+  } else {
+    times(n, factorial(minus(n, 1)))
+  }
 }
+
+print(factorial(4))

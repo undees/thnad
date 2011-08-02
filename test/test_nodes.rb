@@ -25,13 +25,13 @@ HERE
   end
 
   it 'emits a function call' do
-    @context['foo'] = 667
+    @context[:params] = ['foo']
 
     input    = Thnad::Funcall.new 'baz', [Thnad::Number.new(42),
                                           Thnad::Name.new('foo')]
     expected = <<HERE
 ldc 42
-ldc 667
+iload 0
 invokestatic example, baz, int, int, int
 HERE
 
@@ -53,6 +53,22 @@ goto endif
 label else
 ldc 667
 label endif
+HERE
+
+    input.eval @context, @builder
+    @builder.result.must_equal expected
+  end
+
+  it 'emits a function definition' do
+    input    = Thnad::Function.new \
+      'foo',
+      Thnad::Name.new('x'),
+      Thnad::Number.new(5)
+
+    expected = <<HERE
+public_static_method foo, int, int
+ldc 5
+ireturn
 HERE
 
     input.eval @context, @builder

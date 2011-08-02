@@ -11,17 +11,23 @@ module Thnad
     end
 
     def compile
-      tree      = parse_source
-      classname = @classname
+      tree         = parse_source
+      funcs, exprs = split_functions tree
+      classname    = @classname
 
       builder = BiteScript::FileBuilder.build(@filename) do
         public_class classname, object do |klass|
           klass.extend(Builtins)
           klass.add_builtins
 
+          funcs.each do |f|
+            context = Hash.new
+            f.eval(context, klass)
+          end
+
           klass.public_static_method 'main', [], void, string[] do |method|
             context = Hash.new
-            tree.each do |e|
+            exprs.each do |e|
               e.eval(context, method)
             end
 
@@ -46,6 +52,14 @@ module Thnad
       tree      = transform.apply(syntax)
 
       tree.is_a?(Array) ? tree : [tree]
+    end
+
+    def split_functions(tree)
+      first_expr = tree.index { |t| ! t.is_a?(Function) }
+      funcs = first_expr ? tree[0...first_expr] : tree
+      exprs = first_expr ? tree[first_expr..-1] : []
+
+      [funcs, exprs]
     end
 
     def write_result(builder)

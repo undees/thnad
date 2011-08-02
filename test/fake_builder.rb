@@ -6,14 +6,16 @@ class FakeBuilder
   end
 
   def class_builder
-    return 'example'
+    'example'
   end
 
   def int
-    return 'int'
+    'int'
   end
 
   def method_missing(name, *args, &block)
-    @result += "#{name} #{args.join(', ')}\n"
+    @result += ([name] + args.flatten).join(', ').sub(',', '')
+    @result += "\n"
+    block.call(self) if name.to_s == 'public_static_method'
   end
 end

@@ -18,5 +18,16 @@ module Thnad
     rule(:cond     => simple(:cond),
          :if_true  => {:body => simple(:if_true)},
          :if_false => {:body => simple(:if_false)}) { Conditional.new(cond, if_true, if_false) }
+
+    rule(:param  => simple(:param))    { param  }
+    rule(:params => sequence(:params)) { params }
+
+    rule(:func   => simple(:func),
+         :params => simple(:name),
+         :body   => simple(:body)) { Function.new(func.name, [name], body) }
+
+    rule(:func   => simple(:func),
+         :params => sequence(:params),
+         :body   => simple(:body)) { Function.new(func.name, params, body) }
   end
 end
