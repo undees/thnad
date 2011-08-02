@@ -19,4 +19,20 @@ module Thnad
       builder.invokestatic builder.class_builder, name, types
     end
   end
+
+  class Conditional < Struct.new :cond, :if_true, :if_false
+    def eval(context, builder)
+      cond.eval context, builder
+
+      builder.ifeq :else
+
+      if_true.eval context, builder
+      builder.goto :endif
+
+      builder.label :else
+      if_false.eval context, builder
+
+      builder.label :endif
+    end
+  end
 end

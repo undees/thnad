@@ -1,1 +1,5 @@
-print(42)
+if (0) {
+  print(42)
+} else {
+  print(667)
+}
