@@ -16,6 +16,9 @@ module Thnad
 
       builder = BiteScript::FileBuilder.build(@filename) do
         public_class classname, object do |klass|
+          klass.extend(Builtins)
+          klass.add_builtins
+
           klass.public_static_method 'main', [], void, string[] do |method|
             context = Hash.new
             tree.each do |e|

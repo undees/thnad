@@ -5,7 +5,15 @@ class FakeBuilder
     @result = ''
   end
 
+  def class_builder
+    return 'example'
+  end
+
+  def int
+    return 'int'
+  end
+
   def method_missing(name, *args, &block)
-    @result += "#{name} #{args.join(',')}\n"
+    @result += "#{name} #{args.join(', ')}\n"
   end
 end
