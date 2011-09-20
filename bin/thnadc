@@ -1,4 +1,4 @@
-#!/usr/bin/env jruby
+#!/usr/bin/env rbx -rubygems
 
 (puts("Usage: #{} SOURCE"); exit) if ARGV.empty?
 

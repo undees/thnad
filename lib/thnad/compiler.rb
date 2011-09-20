@@ -1,4 +1,3 @@
-require 'bitescript'
 require 'thnad/parser'
 require 'thnad/transform'
 require 'thnad/builtins'
@@ -7,28 +6,24 @@ module Thnad
   class Compiler
     def initialize(filename)
       @filename  = filename
-      @classname = File.basename(@filename, '.thnad')
+      @classname = File.basename(@filename, '.thnad').capitalize
     end
 
     def compile
       tree      = parse_source
       classname = @classname
+      klass     = make_class(classname)
 
-      builder = BiteScript::FileBuilder.build(@filename) do
-        public_class classname, object do |klass|
-          klass.public_static_method 'main', [], void, string[] do |method|
-            context = Hash.new
-            tree.each do |e|
-              e.eval(context, method)
-            end
-
-            method.println(method.int)
-            method.returnvoid
-          end
+      klass.dynamic_method :main do |generator|
+        context = Hash.new
+        tree.each do |e|
+          e.eval(context, generator)
         end
+
+        generator.ret
       end
 
-      write_result builder
+      puts klass.new.main
     end
 
     private
@@ -53,6 +48,10 @@ module Thnad
           f.write b.generate
         end
       end
+    end
+
+    def make_class(name)
+      Object.const_set name.to_sym, Class.new
     end
   end
 end

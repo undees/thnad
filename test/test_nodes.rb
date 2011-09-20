@@ -17,7 +17,7 @@ describe 'Nodes' do
   it 'emits a number' do
     input    = Thnad::Number.new 42
     expected = <<HERE
-ldc 42
+push 42
 HERE
     input.eval @context, @builder
 
