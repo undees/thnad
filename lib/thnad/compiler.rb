@@ -7,6 +7,7 @@ module Thnad
     def initialize(filename)
       @filename  = filename
       @classname = File.basename(@filename, '.thnad').capitalize
+      @outname   = File.basename(@filename, '.thnad') + '.rbc'
     end
 
     def compile
@@ -14,7 +15,7 @@ module Thnad
       classname = @classname
       klass     = make_class(classname)
 
-      klass.dynamic_method :main do |generator|
+      method = klass.dynamic_method :main do |generator|
         context = Hash.new
         tree.each do |e|
           e.eval(context, generator)
@@ -23,7 +24,7 @@ module Thnad
         generator.ret
       end
 
-      puts klass.new.main
+      Rubinius::CompiledFile.dump method, @outname, Rubinius::Signature, 18
     end
 
     private

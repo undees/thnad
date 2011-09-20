@@ -1,0 +1,10 @@
+#!/usr/bin/env rbx -rubygems
+
+(puts("Usage: #{} BINARY"); exit) if ARGV.empty?
+
+loader = Rubinius::CodeLoader.new(ARGV.first)
+method = loader.load_compiled_file(ARGV.first, Rubinius::Signature, 18)
+result = Rubinius.run_script(method)
+
+puts result
+
