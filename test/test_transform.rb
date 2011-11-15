@@ -17,4 +17,38 @@ describe Transform do
 
     @transform.apply(input).must_equal expected
   end
+
+  it 'transforms a name' do
+    input    = {:name => 'foo'}
+    expected = Thnad::Name.new('foo')
+
+    @transform.apply(input).must_equal expected
+  end
+
+  it 'transforms an argument list' do
+    input    = {:args => [{:arg => {:number => '42'}},
+                          {:arg => {:name   => 'foo'}}]}
+    expected = [Thnad::Number.new(42),
+                Thnad::Name.new('foo')]
+
+    @transform.apply(input).must_equal expected
+  end
+
+  it 'transforms a single-argument function call' do
+    input = {:funcall => {:name => 'foo'},
+             :args    => [{:arg => {:number => '42'}}]}
+    expected = Thnad::Funcall.new 'foo', [Thnad::Number.new(42)]
+
+    @transform.apply(input).must_equal expected
+  end
+
+  it 'transforms a multi-argument function call' do
+    input = {:funcall => {:name => 'foo'},
+             :args    => [{:arg => {:number => '42'}},
+                          {:arg => {:name => 'foo'}}]}
+    expected = Thnad::Funcall.new 'foo', [Thnad::Number.new(42),
+                                          Thnad::Name.new('foo')]
+
+    @transform.apply(input).must_equal expected
+  end
 end

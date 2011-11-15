@@ -23,4 +23,22 @@ HERE
 
     @builder.result.must_equal expected
   end
+
+  it 'emits a function call' do
+    @context['foo'] = 667
+
+    input    = Thnad::Funcall.new 'baz', [Thnad::Number.new(42),
+                                          Thnad::Name.new('foo')]
+    expected = <<HERE
+push_self
+push 42
+push 667
+allow_private
+send :baz, 2
+HERE
+
+    input.eval @context, @builder
+
+    @builder.result.must_equal expected
+  end
 end

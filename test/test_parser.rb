@@ -17,4 +17,28 @@ describe Parser do
 
     @parser.number.parse(input).must_equal expected
   end
+
+  it 'reads a name' do
+    input    = 'foo '
+    expected = {:name => 'foo'}
+
+    @parser.name.parse(input).must_equal expected
+  end
+
+  it 'reads an argument list' do
+    input    = '(42, foo)'
+    expected = {:args => [{:arg => {:number => '42'}},
+                          {:arg => {:name   => 'foo'}}]}
+
+    @parser.args.parse(input).must_equal expected
+  end
+
+  it 'reads a function call' do
+    input = 'baz(42, foo)'
+    expected = {:funcall => {:name => 'baz' },
+                :args    => [{:arg => {:number => '42'}},
+                             {:arg => {:name => 'foo'}}]}
+
+    @parser.funcall.parse(input).must_equal expected
+  end
 end
