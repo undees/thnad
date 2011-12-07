@@ -41,4 +41,20 @@ describe Parser do
 
     @parser.funcall.parse(input).must_equal expected
   end
+
+  it 'reads a conditional' do
+    input = <<HERE
+if (0) {
+  42
+} else {
+  667
+}
+HERE
+
+    expected = {:cond     => {:number => '0'},
+                :if_true  => {:body => {:number => '42'}},
+                :if_false => {:body => {:number => '667'}}}
+
+    @parser.cond.parse(input).must_equal expected
+  end
 end

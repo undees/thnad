@@ -41,4 +41,25 @@ HERE
 
     @builder.result.must_equal expected
   end
+
+  it 'emits a conditional' do
+    input    = Thnad::Conditional.new \
+      Thnad::Number.new(0),
+      Thnad::Number.new(42),
+      Thnad::Number.new(667)
+    expected = <<HERE
+push 0
+push 0
+send :==, 1
+goto_if_true label_1
+push 42
+goto label_2
+label_1:
+push 667
+label_2:
+HERE
+
+    input.eval @context, @builder
+    @builder.result.must_equal expected
+  end
 end
