@@ -1,5 +1,17 @@
-if (0) {
-  print(42)
-} else {
-  print(667)
+function eq(a,b) {
+  if(minus(a,b)) {
+    0
+  } else {
+    1
+  }
 }
+
+function factorial(n) {
+  if (eq(n, 1)) {
+    1
+  } else {
+    times(n, factorial(minus(n, 1)))
+  }
+}
+
+print(factorial(4))

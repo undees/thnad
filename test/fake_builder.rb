@@ -21,6 +21,10 @@ class FakeBuilder
     @num_labels = 0
   end
 
+  def int
+    'int'
+  end
+
   def new_label
     @num_labels += 1
     FakeLabel.new self, @num_labels
@@ -32,5 +36,6 @@ class FakeBuilder
     @result += args.empty? ?
       "#{name}\n"          :
       "#{name} #{args.map(&:inspect).join(', ')}\n"
+    block.call(self) if name.to_s == 'dynamic_method'
   end
 end

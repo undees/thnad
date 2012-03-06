@@ -35,6 +35,18 @@ module Thnad
     rule(:if_kw)   { str('if')   >> space? }
     rule(:else_kw) { str('else') >> space? }
 
-    rule(:root)   { expression }
+    rule(:func) {
+      func_kw >> name.as(:func) >> params >> body
+    }
+
+    rule(:func_kw) { str('function') >> space? }
+
+    rule(:params) {
+      lparen >>
+        ((name.as(:param) >> (comma >> name.as(:param)).repeat(0)).maybe).as(:params) >>
+      rparen
+    }
+
+    rule(:root)   { func.repeat(0) >> expression }
   end
 end

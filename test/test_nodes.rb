@@ -25,14 +25,14 @@ HERE
   end
 
   it 'emits a function call' do
-    @context['foo'] = 667
+    @context[:params] = 'foo'
 
     input    = Thnad::Funcall.new 'baz', [Thnad::Number.new(42),
                                           Thnad::Name.new('foo')]
     expected = <<HERE
 push_self
 push 42
-push 667
+push_local 0
 allow_private
 send :baz, 2
 HERE
@@ -57,6 +57,22 @@ goto label_2
 label_1:
 push 667
 label_2:
+HERE
+
+    input.eval @context, @builder
+    @builder.result.must_equal expected
+  end
+
+  it 'emits a function definition' do
+    input    = Thnad::Function.new \
+      'foo',
+      Thnad::Name.new('x'),
+      Thnad::Number.new(5)
+
+    expected = <<HERE
+dynamic_method :foo
+push 5
+ret
 HERE
 
     input.eval @context, @builder

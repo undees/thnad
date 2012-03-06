@@ -63,4 +63,16 @@ describe Transform do
 
     @transform.apply(input).must_equal expected
   end
+
+  it 'transforms a function definition' do
+    input = {:func   => {:name => 'foo'},
+             :params => {:param => {:name => 'x'}},
+             :body   => {:number => '5'}}
+    expected = Thnad::Function.new \
+      'foo',
+      [Thnad::Name.new('x')],
+      Thnad::Number.new(5)
+
+    @transform.apply(input).must_equal expected
+  end
 end

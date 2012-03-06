@@ -7,14 +7,17 @@ module Thnad
 
   class Name < Struct.new :name
     def eval(context, builder)
-      value = context.fetch(name) { raise "Unknown parameter #{name}" }
-      builder.push value
+      param_names = context[:params] || []
+      position    = param_names.index(name)
+      raise "Unknown parameter #{name}" unless position
+
+      builder.push_local position
     end
   end
 
   class Funcall < Struct.new :name, :args
     def eval(context, builder)
-      builder.push_self
+      builder.push_thnad_receiver
       args.each { |a| a.eval(context, builder) }
       builder.allow_private
       builder.send name.to_sym, args.length
@@ -45,6 +48,16 @@ module Thnad
       if_false.eval context, builder
 
       endif_label.set!
+    end
+  end
+
+  class Function < Struct.new :name, :params, :body
+    def eval(context, builder)
+      param_names = (params.is_a?(Array) ? params : [params]).map(&:name)
+      context[:params] = param_names
+
+      self.body.eval(context, builder)
+      builder.ret
     end
   end
 end
