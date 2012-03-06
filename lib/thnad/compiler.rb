@@ -126,7 +126,6 @@ module Thnad
 
       g.close
       g.use_detected
-      p g.stream
       g.encode
 
       main = g.package Rubinius::CompiledMethod
