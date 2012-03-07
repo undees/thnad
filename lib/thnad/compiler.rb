@@ -1,6 +1,5 @@
 require 'thnad/parser'
 require 'thnad/transform'
-require 'thnad/builtins'
 
 class Rubinius::Generator
   def set_thnad_receiver
