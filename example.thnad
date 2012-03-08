@@ -1,5 +1,17 @@
-function eq(a,b) {
-  if(minus(a,b)) {
+function plus(a, b) {
+  minus(a, minus(0, b))
+}
+
+function times(a, b) {
+  if (eq(b, 0)) {
+    0
+  } else {
+    plus(a, times(a, minus(b, 1)))
+  }
+}
+
+function eq(a, b) {
+  if (minus(a, b)) {
     0
   } else {
     1

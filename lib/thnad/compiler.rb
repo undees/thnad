@@ -64,31 +64,6 @@ module Thnad
       g.send :attach_method, 4
       g.pop
 
-      g.push_thnad_receiver
-      inner = Rubinius::Generator.new
-      inner.name = :times
-      inner.file = @filename.to_sym
-      inner.set_line 1
-      inner.required_args = 2
-      inner.total_args = inner.required_args
-      inner.push_local 0
-      inner.push_local 1
-      inner.send :*, 1
-      inner.ret
-      inner.close
-      inner.use_detected
-      inner.encode
-
-      cm = inner.package Rubinius::CompiledMethod
-
-      g.push_rubinius
-      g.push_literal :times
-      g.push_literal cm
-      g.push_scope
-      g.push_thnad_receiver
-      g.send :attach_method, 4
-      g.pop
-
       funcs.each do |f|
         inner = Rubinius::Generator.new
         inner.name = f.name.to_sym
