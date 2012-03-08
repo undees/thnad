@@ -31,7 +31,6 @@ module Thnad
               e.eval(context, method)
             end
 
-            method.println(method.int)
             method.returnvoid
           end
         end
