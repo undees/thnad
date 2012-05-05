@@ -56,8 +56,10 @@ module Thnad
       param_names = [params].flatten.map(&:name)
       context[:params] = param_names
 
-      self.body.eval(context, builder)
-      builder.ret
+      builder.begin_method name.to_sym, params.count
+      self.body.eval(context, builder.current_method)
+      builder.current_method.ret
+      builder.end_method
     end
   end
 end

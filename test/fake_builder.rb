@@ -30,6 +30,10 @@ class FakeBuilder
     FakeLabel.new self, @num_labels
   end
 
+  def current_method
+    self
+  end
+
   undef_method :send
 
   def method_missing(name, *args, &block)

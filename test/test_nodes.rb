@@ -70,8 +70,10 @@ HERE
       Thnad::Number.new(5)
 
     expected = <<HERE
+begin_method :foo, 1
 push 5
 ret
+end_method
 HERE
 
     input.eval @context, @builder

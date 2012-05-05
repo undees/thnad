@@ -14,6 +14,40 @@ class Rubinius::Generator
   def push_thnad_receiver
     push_const :Thnad
   end
+
+  def current_method; @inner end
+
+  def begin_method(name, num_args)
+    push_thnad_receiver
+
+    inner = Rubinius::Generator.new
+    inner.name = name
+    inner.file = file
+    inner.set_line 1
+    inner.required_args = num_args
+    inner.total_args = inner.required_args
+
+    @inner = inner
+    return inner
+  end
+
+  def end_method
+    inner = @inner
+
+    inner.close
+    inner.use_detected
+    inner.encode
+
+    cm = inner.package Rubinius::CompiledMethod
+
+    push_rubinius
+    push_literal inner.name
+    push_literal cm
+    push_scope
+    push_thnad_receiver
+    send :attach_method, 4
+    pop
+  end
 end
 
 
@@ -39,55 +73,16 @@ module Thnad
       g.add_scope
       g.set_thnad_receiver
 
-      g.push_thnad_receiver
-      inner = Rubinius::Generator.new
-      inner.name = :minus
-      inner.file = @filename.to_sym
-      inner.set_line 1
-      inner.required_args = 2
-      inner.total_args = inner.required_args
-      inner.push_local 0
-      inner.push_local 1
-      inner.send :-, 1
-      inner.ret
-      inner.close
-      inner.use_detected
-      inner.encode
-
-      cm = inner.package Rubinius::CompiledMethod
-
-      g.push_rubinius
-      g.push_literal :minus
-      g.push_literal cm
-      g.push_scope
-      g.push_thnad_receiver
-      g.send :attach_method, 4
-      g.pop
+      g.begin_method :minus, 2
+      g.current_method.push_local 0
+      g.current_method.push_local 1
+      g.current_method.send :-, 1
+      g.current_method.ret
+      g.end_method
 
       funcs.each do |f|
-        inner = Rubinius::Generator.new
-        inner.name = f.name.to_sym
-        inner.file = @filename.to_sym
-        inner.set_line 1
-        inner.required_args = f.params.count
-        inner.total_args = inner.required_args
-
         context = Hash.new
-        f.eval(context, inner)
-
-        inner.close
-        inner.use_detected
-        inner.encode
-
-        cm = inner.package Rubinius::CompiledMethod
-
-        g.push_rubinius
-        g.push_literal f.name.to_sym
-        g.push_literal cm
-        g.push_scope
-        g.push_thnad_receiver
-        g.send :attach_method, 4
-        g.pop
+        f.eval(context, g)
       end
 
       context = Hash.new
