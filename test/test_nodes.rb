@@ -30,7 +30,7 @@ HERE
     input    = Thnad::Funcall.new 'baz', [Thnad::Number.new(42),
                                           Thnad::Name.new('foo')]
     expected = <<HERE
-push_self
+push_thnad_receiver
 push 42
 push_local 0
 allow_private
@@ -70,7 +70,6 @@ HERE
       Thnad::Number.new(5)
 
     expected = <<HERE
-dynamic_method :foo
 push 5
 ret
 HERE
