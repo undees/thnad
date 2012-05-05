@@ -118,7 +118,7 @@ module Thnad
       syntax    = parser.parse(program)
       tree      = transform.apply(syntax)
 
-      tree.is_a?(Array) ? tree : [tree]
+      Array(tree)
     end
 
     def split_functions(tree)

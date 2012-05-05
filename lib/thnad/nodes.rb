@@ -53,7 +53,7 @@ module Thnad
 
   class Function < Struct.new :name, :params, :body
     def eval(context, builder)
-      param_names = (params.is_a?(Array) ? params : [params]).map(&:name)
+      param_names = [params].flatten.map(&:name)
       context[:params] = param_names
 
       self.body.eval(context, builder)
