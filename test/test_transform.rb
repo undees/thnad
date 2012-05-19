@@ -43,10 +43,10 @@ describe Transform do
   end
 
   it 'transforms a multi-argument function call' do
-    input = {:funcall => {:name => 'foo'},
+    input = {:funcall => {:name => 'baz'},
              :args    => [{:arg => {:number => '42'}},
                           {:arg => {:name => 'foo'}}]}
-    expected = Thnad::Funcall.new 'foo', [Thnad::Number.new(42),
+    expected = Thnad::Funcall.new 'baz', [Thnad::Number.new(42),
                                           Thnad::Name.new('foo')]
 
     @transform.apply(input).must_equal expected
